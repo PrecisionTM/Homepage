@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/images/(.*)",
+      "headers": { "cache-control": "public, max-age=86400, stale-while-revalidate=3600" },
+      "dest": "/images/$1"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
+      "dest": "/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ]
+}
