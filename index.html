@@ -86,9 +86,16 @@
     ──────────────────────────────────────────────────────────── */
     #hero {
       position: relative;
-      height: 75vh;
-      min-height: 560px;
+      height: auto;
+      min-height: clamp(560px, 62vw, 860px);
       overflow: hidden;
+    }
+
+    @media (max-width: 639px) {
+      #hero {
+        height: auto;
+        min-height: clamp(500px, 120vw, 760px);
+      }
     }
     #hero .hero-img {
       position: absolute; inset: 0;
