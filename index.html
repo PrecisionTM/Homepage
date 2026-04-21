@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precision Telemed – Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Brand tokens ─────────────────────────────────────────── */
+    :root {
+      --sage:        #7E9274;   /* primary brand sage green */
+      --sage-light:  #a3b599;
+      --sage-dark:   #5e6e57;
+      --sage-bg:     #f0f3ee;   /* very light sage tint */
+      --sage-muted:  rgba(126,146,116,.15);
+      --bg:          #f9f7f4;
+      --card:        #ffffff;
+      --fg:          #1a2419;
+      --fg-muted:    #6b7a65;
+      --border:      #e0e5dc;
+      --radius:      16px;
+      --font-head:   'Playfair Display', serif;
+      --font-body:   'DM Sans', sans-serif;
+    }
+
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Utility ──────────────────────────────────────────────── */
+    .container  { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .container-sm { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .section    { padding: 56px 24px; }
+    .section-sm { padding: 36px 24px; }
+    .tag        { display: inline-block; font-size: 11px; font-weight: 700;
+                  letter-spacing: .12em; text-transform: uppercase;
+                  color: var(--sage); }
+    .h1 { font-family: var(--font-head); font-size: clamp(2.4rem,6vw,4.2rem);
+          font-weight: 700; line-height: 1.05; }
+    .h2 { font-family: var(--font-head); font-size: clamp(2rem,4vw,3.2rem);
+          font-weight: 700; line-height: 1.1; }
+    .h3 { font-family: var(--font-head); font-size: clamp(1.4rem,3vw,2rem);
+          font-weight: 700; line-height: 1.2; }
+    .lead { font-size: 1.1rem; color: var(--fg-muted); font-weight: 300; line-height: 1.7; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 999px; font-size: .875rem;
+      font-weight: 600; cursor: pointer; transition: all .2s; border: none;
+    }
+    .btn-primary { background: var(--sage); color: #fff; }
+    .btn-primary:hover { background: var(--sage-dark); }
+    .btn-outline { background: transparent; color: var(--fg); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--sage); background: var(--sage-muted); }
+    .btn-ghost-white { background: #fff; color: var(--sage-dark);
+                       border: 1.5px solid #fff; font-weight: 600; }
+    .btn-ghost-white:hover { background: rgba(255,255,255,.88); border-color: rgba(255,255,255,.88); }
+
+    .card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: var(--radius); transition: border-color .2s, box-shadow .2s;
+    }
+    .card:hover { border-color: var(--sage-light); box-shadow: 0 4px 24px rgba(126,146,116,.12); }
+
+    /* scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Marquee ──────────────────────────────────────────────── */
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .marquee-track { display:flex; white-space:nowrap; animation:marquee 18s linear infinite; }
+    .marquee-track:hover { animation-play-state:paused; }
+
+    /* ────────────────────────────────────────────────────────────
+       1. HERO
+    ──────────────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: clamp(480px, 52vw, 720px);
+      height: auto;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    #hero .hero-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: 54% 30%;
+    }
+    #hero .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,.72) 0%, rgba(0,0,0,.38) 55%, transparent 100%),
+                  linear-gradient(to top, rgba(0,0,0,.45) 0%, transparent 50%);
+    }
+    #hero .hero-content {
+      position: relative;
+      z-index: 2;
+      left: 0; right: 0;
+      padding: 48px 24px 48px;
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    #hero .hero-inner { max-width: 620px; }
+
+    .stars { display:flex; align-items:center; gap:4px; margin-bottom:16px; }
+    .stars svg { width:16px; height:16px; fill:#f5c842; color:#f5c842; flex-shrink:0; }
+    .stars span { color:rgba(255,255,255,.75); font-size:.8rem; font-weight:500; margin-left:6px; align-self:center; }
+
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px;
+                    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3);
+                    border-radius:999px; padding:5px 14px; margin-bottom:20px;
+                    font-size:.72rem; font-weight:700; letter-spacing:.1em;
+                    text-transform:uppercase; color:#ffffff; }
+    .hero-eyebrow .dot-pulse { width:7px; height:7px; border-radius:50%;
+                               background:#a3b599; flex-shrink:0;
+                               box-shadow:0 0 0 3px rgba(163,181,153,.3); }
+
+    .hero-title { color:#fff; margin-bottom:16px; font-size:clamp(2rem,4.5vw,3.2rem); line-height:1.15; }
+    .hero-title .light { display:block; font-weight:300; font-style:italic; color:rgba(255,255,255,.75); margin-top:6px; }
+    .hero-desc { color:rgba(255,255,255,.72); font-size:1rem; max-width:460px; line-height:1.7; font-weight:300; margin-bottom:24px; }
+
+    .hero-btns { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:28px; }
+
+    .hero-checklist { display:grid; grid-template-columns:1fr 1fr; gap:6px 32px; }
+    .hero-checklist li { list-style:none; display:flex; align-items:center; gap:8px;
+                         color:rgba(255,255,255,.9); font-size:.82rem; font-weight:500;
+                         text-shadow:0 1px 3px rgba(0,0,0,.7); }
+    .hero-checklist li .dot {
+      width:8px; height:8px; border-radius:50%; background:var(--sage-light); flex-shrink:0;
+    }
+
+    /* ────────────────────────────────────────────────────────────
+       2. TREATMENTS
+    ──────────────────────────────────────────────────────────── */
+    #treatments { background: var(--bg); }
+
+    .filter-tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:32px; }
+    .filter-tab {
+      padding:7px 18px; border-radius:999px; font-size:.78rem; font-weight:600;
+      cursor:pointer; border:1.5px solid var(--border); background:var(--card);
+      transition:all .2s; white-space:nowrap;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background:var(--sage); color:#fff; border-color:var(--sage);
+    }
+
+    .treatment-row {
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:20px 28px; border-radius:var(--radius);
+      background:var(--card); border:1.5px solid var(--border);
+      transition:all .2s; cursor:pointer;
+      text-decoration:none; color:inherit;
+    }
+    .treatment-row:hover { border-color:var(--sage-light); box-shadow:0 4px 20px rgba(126,146,116,.12); }
+    .treatment-row + .treatment-row { margin-top:12px; }
+    .tr-icon {
+      width:56px; height:56px; border-radius:14px; flex-shrink:0;
+      background:linear-gradient(135deg,rgba(126,146,116,.2),rgba(126,146,116,.08));
+      display:flex; align-items:center; justify-content:center;
+    }
+    .tr-icon svg { width:26px; height:26px; color:var(--sage); stroke:currentColor; fill:none;
+                   stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .tr-body { flex:1; min-width:0; }
+    .tr-title { font-size:1rem; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+    .tr-badge { font-size:.7rem; font-weight:700; background:rgba(126,146,116,.18);
+                color:var(--sage); padding:2px 10px; border-radius:999px;
+                text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
+    .tr-desc { font-size:.85rem; color:var(--fg-muted); }
+    .tr-right { display:flex; align-items:center; gap:20px; flex-shrink:0; }
+    .tr-price { font-weight:600; font-size:.9rem; white-space:nowrap; display:none; }
+    .tr-arrow {
+      width:42px; height:42px; border-radius:50%; border:none;
+      background:rgba(126,146,116,.1); display:flex; align-items:center; justify-content:center;
+      transition:all .2s; flex-shrink:0;
+    }
+    .treatment-row:hover .tr-arrow { background:var(--sage); }
+    .tr-arrow svg { width:18px; height:18px; color:var(--sage); stroke:currentColor; fill:none;
+                    stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .treatment-row:hover .tr-arrow svg { color:#fff; }
+
+    @media(min-width:640px){ .tr-price{display:block;} }
+
+    /* hidden rows for filter */
+    .treatment-row[data-cat].hidden { display:none; }
+
+    /* ────────────────────────────────────────────────────────────
+       NEWS OUTLET LOGO BANNER (below hero)
+    ──────────────────────────────────────────────────────────── */
+    #news-banner {
+      background: #ffffff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-top: 1px solid #e0e5dc;
+      border-bottom: 1px solid #e0e5dc;
+      overflow: hidden;
+      padding: 10px 0;
+    }
+    #news-banner .news-label {
+      flex-shrink: 0;
+      padding: 0 28px 0 24px;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #6b7a65;
+      white-space: nowrap;
+      border-right: 1px solid #e0e5dc;
+      margin-right: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #news-banner .news-label::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #ffffff;
+      opacity: 0.9;
+    }
+    #news-banner .news-marquee-wrap {
+      flex: 1;
+      overflow: hidden;
+    }
+    @keyframes news-marquee {
+      0%   { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+    #news-banner .news-track {
+      display: flex;
+      align-items: center;
+      width: max-content;
+      animation: news-marquee 24s linear infinite;
+      will-change: transform;
+    }
+    #news-banner .news-track:hover { animation-play-state: paused; }
+    #news-banner .news-logo-link {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin: 0 40px;
+      opacity: 1;
+      transition: opacity .25s, transform .25s;
+    }
+    #news-banner .news-logo-link:hover { opacity: .85; transform: translateY(-1px); }
+    #news-banner .news-logo-link img {
+      height: 80px;
+      width: auto;
+      max-width: 220px;
+      object-fit: contain;
+      filter: brightness(0);
+      transition: filter .35s, opacity .35s;
+    }
+    #news-banner .news-logo-link:hover img {
+      filter: none;
+    }
+    #news-banner .banner-inner {
+      display: flex;
+      align-items: center;
+    }
+
+    /* ────────────────────────────────────────────────────────────
+       3. AS SEEN IN
+    ──────────────────────────────────────────────────────────── */
+    #as-seen-in { background:var(--sage); overflow:hidden; padding:14px 0; }
+    .marquee-item { display:inline-flex; align-items:center; gap:10px;
+                    margin:0 32px; font-size:.78rem; font-weight:700;
+                    letter-spacing:.1em; text-transform:uppercase; color:#fff; }
+    .marquee-item svg { width:16px; height:16px; stroke:#fff; fill:none;
+                        stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+    /* ────────────────────────────────────────────────────────────
+       4. PROVIDERS
+    ──────────────────────────────────────────────────────────── */
+    #providers { background:var(--sage-bg); }
+
+    /* ── Doctor carousel ────────────────────────────────────── */
+    .provider-carousel-wrap {
+      position: relative;
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+    .provider-carousel {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+      cursor: grab;
+    }
+    .provider-carousel:active { cursor: grabbing; }
+    .provider-carousel::-webkit-scrollbar { display: none; }
+    .provider-card {
+      flex: 0 0 200px;
+      scroll-snap-align: start;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .provider-card:hover {
+      border-color: var(--sage-light);
+      box-shadow: 0 6px 28px rgba(126,146,116,.14);
+    }
+    .provider-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      background: #888;
+    }
+    .provider-info { padding: 14px 16px 16px; }
+    .provider-name { font-size: .93rem; font-weight: 700; color: var(--fg); line-height: 1.3; }
+    .provider-specialty { font-size: .78rem; color: var(--fg-muted); font-weight: 400; margin-top: 3px; }
+    .provider-school { font-size: .72rem; color: var(--fg-muted); margin-top: 8px; line-height: 1.5; }
+    .provider-npi { font-size: .7rem; color: var(--fg-muted); opacity: .7; margin-top: 4px; }
+
+    /* Prev / Next arrows */
+    .carousel-btn {
+      position: absolute;
+      top: 38%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, border-color .2s;
+    }
+    .carousel-btn:hover { background: var(--sage); border-color: var(--sage); }
+    .carousel-btn:hover svg { stroke: #fff; }
+    .carousel-btn svg { width:18px; height:18px; stroke:var(--fg); fill:none;
+                        stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .carousel-btn.prev { left: -20px; }
+    .carousel-btn.next { right: -20px; }
+    @media(max-width:640px){
+      .carousel-btn.prev { left: 0; }
+      .carousel-btn.next { right: 0; }
+    }
+
+    /* Dot indicators */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .carousel-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+      border: none;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--sage);
+      transform: scale(1.35);
+    }
+
+    .pharmacy-grid { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+    .pharmacy-row { display:flex; align-items:flex-start; gap:16px; padding:20px 24px; }
+    .pharmacy-icon { width:44px; height:44px; border-radius:12px; background:rgba(126,146,116,.15);
+                     display:flex; align-items:center; justify-content:center; flex-shrink:0;
+                     font-size:1.1rem; }
+    .pharmacy-name { font-weight:600; font-size:.95rem; }
+    .pharmacy-desc { font-size:.82rem; color:var(--fg-muted); margin-top:4px; line-height:1.5; }
+
+    /* ────────────────────────────────────────────────────────────
+       5. UGC GRID
+    ──────────────────────────────────────────────────────────── */
+    #ugc { background:var(--bg); }
+    .ugc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .ugc-item { position:relative; border-radius:14px; overflow:hidden;
+                aspect-ratio:1; cursor:pointer; }
+    .ugc-item img { width:100%; height:100%; object-fit:cover;
+                    transition:transform .5s; }
+    .ugc-item:hover img { transform:scale(1.06); }
+    .ugc-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.8) 0%,rgba(0,0,0,.15) 50%,transparent 100%);
+                   opacity:0; transition:opacity .3s; }
+    .ugc-item:hover .ugc-overlay { opacity:1; }
+    .ugc-caption { position:absolute; bottom:0; left:0; right:0; padding:12px;
+                   transform:translateY(6px); opacity:0; transition:all .3s; }
+    .ugc-item:hover .ugc-caption { transform:none; opacity:1; }
+    .ugc-handle { font-size:.72rem; font-weight:700; color:rgba(255,255,255,.9); margin-bottom:4px; }
+    .ugc-text { font-size:.72rem; color:rgba(255,255,255,.82); line-height:1.4;
+                display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+    @media(max-width:500px){ .ugc-grid{grid-template-columns:repeat(2,1fr);} }
+
+    /* ────────────────────────────────────────────────────────────
+       6. COACH CHRIS
+    ──────────────────────────────────────────────────────────── */
+    #coach { background:var(--sage-bg); }
+    .pill-badge { display:inline-block; background:rgba(126,146,116,.25); color:var(--sage);
+                  border:1.5px solid rgba(126,146,116,.5); border-radius:999px;
+                  font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+                  padding:5px 14px; }
+    /* workout cards */
+    .workout-grid { display:flex; flex-direction:column; gap:14px; margin-top:28px; }
+    .workout-card-full {
+      display:flex; align-items:center; gap:18px;
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:var(--radius); padding:20px 24px;
+      box-shadow:0 2px 12px rgba(0,0,0,.05);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .workout-card-full:hover { border-color:var(--sage-light); box-shadow:0 4px 20px rgba(126,146,116,.12); }
+    .workout-card-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .workout-card-half {
+      display:flex; flex-direction:column; align-items:center;
+      gap:14px; text-align:center;
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:var(--radius); padding:28px 20px;
+      box-shadow:0 2px 12px rgba(0,0,0,.05);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .workout-card-half:hover { border-color:var(--sage-light); box-shadow:0 4px 20px rgba(126,146,116,.12); }
+    .workout-icon {
+      width:52px; height:52px; border-radius:14px;
+      background:rgba(126,146,116,.12);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .workout-icon svg { width:24px; height:24px; color:var(--sage); stroke:currentColor; fill:none;
+                        stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .workout-title { font-weight:700; font-size:.95rem; color:var(--fg); }
+    .workout-desc  { font-size:.8rem; color:var(--fg-muted); line-height:1.5; margin-top:4px; }
+    @media(max-width:540px){
+      .workout-card-row { grid-template-columns:1fr; }
+    }
+
+    /* ────────────────────────────────────────────────────────────
+       7. BENEFITS
+    ──────────────────────────────────────────────────────────── */
+    #benefits { background:var(--bg); }
+    .benefits-list { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+    .benefit-row { display:flex; align-items:flex-start; gap:16px; padding:20px 24px; }
+    .benefit-icon { width:42px; height:42px; border-radius:12px; background:rgba(126,146,116,.12);
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .benefit-icon svg { width:20px; height:20px; color:var(--sage); stroke:currentColor; fill:none;
+                        stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .benefit-title { font-weight:600; font-size:.95rem; margin-bottom:4px; }
+    .benefit-desc { font-size:.85rem; color:var(--fg-muted); line-height:1.55; }
+
+    #cta-banner { background:rgba(126,146,116,.18); padding:48px 24px; text-align:center; }
+
+    /* ────────────────────────────────────────────────────────────
+       8. HOW IT WORKS
+    ──────────────────────────────────────────────────────────── */
+    #how { background:var(--bg); }
+    .steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
+    @media(max-width:700px){ .steps-grid{grid-template-columns:repeat(2,1fr); gap:20px;} }
+    .step-item { display:flex; flex-direction:column; align-items:center; text-align:center; }
+    .step-circle { width:72px; height:72px; border-radius:50%;
+                   background:rgba(126,146,116,.1); border:2px solid rgba(126,146,116,.3);
+                   display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+    .step-num { font-family:var(--font-head); font-size:1.8rem; font-weight:700; color:var(--sage); }
+    .step-icon { margin-bottom:12px; }
+    .step-icon svg { width:28px; height:28px; color:var(--sage); stroke:currentColor; fill:none;
+                     stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .step-title { font-weight:600; font-size:1rem; margin-bottom:8px; }
+    .step-desc { font-size:.85rem; color:var(--fg-muted); line-height:1.6; }
+
+    /* ────────────────────────────────────────────────────────────
+       9. STATS BANNER
+    ──────────────────────────────────────────────────────────── */
+    #stats { background:var(--sage); color:#fff; padding:48px 24px; }
+    #stats .tag { color:rgba(255,255,255,.65); }
+    #stats .h2 { color:#fff; margin-top:10px; }
+    #stats .lead { color:rgba(255,255,255,.72); margin-top:10px; }
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:32px; }
+    .stat-val { font-family:var(--font-head); font-size:2.4rem; font-weight:700; color:#fff; }
+    .stat-label { font-size:.82rem; color:rgba(255,255,255,.62); margin-top:2px; }
+    .stats-footer { margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,.18);
+                    font-size:.82rem; color:rgba(255,255,255,.5); }
+    .stats-footer strong { color:rgba(255,255,255,.8); }
+    @media(min-width:640px){ .stats-grid{grid-template-columns:repeat(4,1fr);} }
+
+    /* ────────────────────────────────────────────────────────────
+       10. TESTIMONIALS
+    ──────────────────────────────────────────────────────────── */
+    #testimonials { background:var(--bg); }
+    .tp-badge { display:inline-flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .tp-label { background:#00b67a; color:#fff; font-size:.72rem; font-weight:700;
+                padding:2px 7px; border-radius:4px; }
+    .tp-stars { display:flex; gap:2px; }
+    .tp-stars svg { width:14px; height:14px; fill:#00b67a; color:#00b67a; }
+    .tp-score { font-weight:700; }
+    .tp-link { font-size:.85rem; font-weight:500; color:var(--sage); }
+    .tp-link:hover { text-decoration:underline; }
+    .reviews-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+    .review-card { padding:24px; }
+    .review-stars { display:flex; gap:2px; margin-bottom:12px; }
+    .review-stars svg { width:14px; height:14px; fill:#f5c842; color:#f5c842; }
+    .review-text { font-size:.88rem; color:var(--fg-muted); line-height:1.65; margin-bottom:16px; }
+    .review-author { display:flex; align-items:center; gap:10px; }
+    .review-avatar { width:34px; height:34px; border-radius:50%; background:var(--sage);
+                     display:flex; align-items:center; justify-content:center;
+                     font-size:.72rem; font-weight:700; color:#fff; flex-shrink:0; }
+    .review-name { font-weight:600; font-size:.85rem; }
+    .review-program { font-size:.75rem; color:var(--fg-muted); }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media(max-width:639px){
+      .hero-checklist { grid-template-columns:1fr; }
+      #hero { min-height: clamp(480px, 110vw, 680px); height: auto; }
+      #hero .hero-content { padding: 48px 24px; }
+    }
+    @media(min-width:640px){
+      #hero .hero-img { object-position:70% 30%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+  FLOATING CTA BAR
+═══════════════════════════════════════════════════════════════ -->
+<div id="floating-cta">
+  <div class="fcta-inner">
+    <img class="fcta-logo" src="images/logo-text-transparent.png" alt="Precision Telemed" />
+    <div class="fcta-divider"></div>
+    <div class="fcta-text">
+      <span class="fcta-headline">Start your program today</span>
+      <span class="fcta-sub">Board-certified care · All 50 states · Ships in 3–5 days</span>
+    </div>
+    <a href="https://precisiontelemed.com/get-started/" target="_blank" rel="noopener" class="fcta-btn">
+      Get Started
+      <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<style>
+  #floating-cta {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    z-index: 999;
+    opacity: 0;
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
+    pointer-events: none;
+    width: calc(100% - 48px);
+    max-width: 780px;
+  }
+  #floating-cta.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .fcta-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(126,146,116,0.2);
+    border-radius: 20px;
+    padding: 14px 18px 14px 22px;
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.12),
+      0 2px 8px rgba(126,146,116,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  .fcta-logo {
+    height: 44px;
+    width: auto;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+  .fcta-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(126,146,116,0.25);
+    flex-shrink: 0;
+  }
+  .fcta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+  .fcta-headline {
+    font-size: .9rem;
+    font-weight: 700;
+    color: #1a2419;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fcta-sub {
+    font-size: .72rem;
+    color: #6b7a65;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fcta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #7E9274;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 700;
+    padding: 11px 22px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 14px rgba(94,110,87,.35);
+    letter-spacing: .01em;
+  }
+  .fcta-btn:hover {
+    background: #5e6e57;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(94,110,87,.45);
+  }
+  .fcta-btn:active { transform: translateY(0); }
+
+  /* Close button */
+  .fcta-close {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.06);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background .2s;
+    padding: 0;
+  }
+  .fcta-close:hover { background: rgba(0,0,0,0.12); }
+  .fcta-close svg { width: 12px; height: 12px; stroke: #6b7a65; stroke-width: 2.5; fill: none; }
+
+  @media(max-width: 560px) {
+    #floating-cta { bottom: 16px; width: calc(100% - 24px); }
+    .fcta-divider, .fcta-text { display: none; }
+    .fcta-inner { justify-content: center; gap: 12px; padding: 12px 14px; }
+    .fcta-logo { height: 36px; display: block; margin: 0 auto; }
+    .fcta-btn { font-size: .78rem; padding: 10px 18px; }
+  }
+</style>
+
+<script>
+  (function(){
+    const bar = document.getElementById('floating-cta');
+
+    // Inject close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'fcta-close';
+    closeBtn.setAttribute('aria-label', 'Dismiss');
+    closeBtn.innerHTML = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    bar.querySelector('.fcta-inner').appendChild(closeBtn);
+
+    let dismissed = false;
+
+    closeBtn.addEventListener('click', () => {
+      dismissed = true;
+      bar.classList.remove('visible');
+    });
+
+    function checkScroll() {
+      if (dismissed) return;
+      if (window.scrollY > 400) {
+        bar.classList.add('visible');
+      } else {
+        bar.classList.remove('visible');
+      }
+    }
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+  })();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+  1. HERO SECTION
+═══════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <img
+    class="hero-img"
+    src="https://media.base44.com/images/public/69c960e4cb46e989da825f7d/60bcc1d25_generated_image.png"
+    alt="Couple working out outside"
+  />
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-inner">
+
+      <!-- Eyebrow pill -->
+      <div class="hero-eyebrow">
+        <span class="dot-pulse"></span>
+        Nationwide Telemedicine · All 50 States
+      </div>
+
+      <!-- Stars -->
+      <div class="stars">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="stars-divider"></span>
+        <a href="https://www.trustpilot.com/review/precisiontelemed.com" target="_blank" rel="noopener" style="color:rgba(255,255,255,.75); text-decoration:none;">4.7 on Trustpilot</a>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="h1 hero-title">
+        Telemedicine for people<br>
+        <span class="light">who expect more.</span>
+      </h1>
+
+      <!-- Subhead -->
+      <p class="hero-desc">
+        Weight Loss, TRT, Sermorelin, NAD+ and more — prescribed by board-certified clinicians, shipped to your door.
+      </p>
+
+      <!-- CTAs -->
+      <div class="hero-btns">
+        <a href="https://precisiontelemed.com/get-started/" target="_blank" rel="noopener" class="btn btn-ghost-white primary-cta">
+          Find Your Treatment
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://precisiontelemed.com/start-general-consultation-program/" target="_blank" rel="noopener" class="btn btn-ghost-white">
+          Not Sure? Consult First
+        </a>
+      </div>
+
+      <!-- Checklist -->
+      <ul class="hero-checklist">
+        <li><span class="dot"></span>Same price at every dose, no hidden fees</li>
+        <li><span class="dot"></span>No subscription required</li>
+        <li><span class="dot"></span>Free expedited shipping</li>
+        <li><span class="dot"></span>No membership fees</li>
+        <li><span class="dot"></span>All 50 states</li>
+        <li><span class="dot"></span>Doctor-led plans, coaching &amp; community</li>
+      </ul>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  NEWS OUTLET LOGO BANNER
+═══════════════════════════════════════════════════════════════ -->
+<div id="news-banner">
+  <div class="banner-inner">
+    <span class="news-label">As Seen In</span>
+    <div class="news-marquee-wrap">
+      <div class="news-track">
+        <!-- Set 1 -->
+        <a class="news-logo-link" href="https://markets.businessinsider.com/news/stocks/precision-telemed-announces-the-appointment-of-chris-lane-as-director-of-precision-performance-expands-holistic-wellness-programs-with-glp-1-weight-loss-treatments-1035133060" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-1.png" alt="Business Insider" /></a>
+        <a class="news-logo-link" href="https://finance.yahoo.com/news/precision-telemed-announces-appointment-chris-155500205.html" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-2.png" alt="Yahoo Finance" /></a>
+        <a class="news-logo-link" href="https://www.digitaljournal.com/pr/news/access-newswire/precision-telemed-announces-appointment-chris-1159288491.html" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-3.png" alt="Digital Journal" /></a>
+        <a class="news-logo-link" href="https://www.digitalfitnessworld.com/precision-telemed/" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-4.png" alt="Digital Fitness World" /></a>
+        <a class="news-logo-link" href="https://www.sciencetimes.com/articles/60588/20250911/precision-telemed-champions-evidence-based-wellness-transparent-glp-1-hormone-therapies.htm" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-5.png" alt="Science Times" /></a>
+        <a class="news-logo-link" href="https://apnews.com/press-release/access-newswire/precision-telemed-announces-the-appointment-of-chris-lane-as-director-of-precision-performance-expands-holistic-wellness-programs-with-glp-1-weight-loss-treatments-fd803112a7ad02da83134c6908a0a191" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-6.png" alt="AP News" /></a>
+        <!-- Set 2 — exact duplicate so -50% snaps back seamlessly -->
+        <a class="news-logo-link" href="https://markets.businessinsider.com/news/stocks/precision-telemed-announces-the-appointment-of-chris-lane-as-director-of-precision-performance-expands-holistic-wellness-programs-with-glp-1-weight-loss-treatments-1035133060" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-1.png" alt="Business Insider" /></a>
+        <a class="news-logo-link" href="https://finance.yahoo.com/news/precision-telemed-announces-appointment-chris-155500205.html" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-2.png" alt="Yahoo Finance" /></a>
+        <a class="news-logo-link" href="https://www.digitaljournal.com/pr/news/access-newswire/precision-telemed-announces-appointment-chris-1159288491.html" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-3.png" alt="Digital Journal" /></a>
+        <a class="news-logo-link" href="https://www.digitalfitnessworld.com/precision-telemed/" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-4.png" alt="Digital Fitness World" /></a>
+        <a class="news-logo-link" href="https://www.sciencetimes.com/articles/60588/20250911/precision-telemed-champions-evidence-based-wellness-transparent-glp-1-hormone-therapies.htm" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-5.png" alt="Science Times" /></a>
+        <a class="news-logo-link" href="https://apnews.com/press-release/access-newswire/precision-telemed-announces-the-appointment-of-chris-lane-as-director-of-precision-performance-expands-holistic-wellness-programs-with-glp-1-weight-loss-treatments-fd803112a7ad02da83134c6908a0a191" target="_blank" rel="noopener noreferrer"><img src="https://precisiontelemed.com/wp-content/uploads/2025/11/img-6.png" alt="AP News" /></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+  2. TREATMENTS SECTION
+═══════════════════════════════════════════════════════════════ -->
+<section id="treatments" class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:20px;">
+      <span class="tag">All Programs</span>
+      <h2 class="h2" style="margin-top:10px;">Find Your Program</h2>
+      <p class="lead" style="max-width:520px; margin:10px auto 0;">Personalized treatments for every goal. Choose what matters to you.</p>
+    </div>
+
+    <div class="filter-tabs reveal">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="glp1">Weight Loss</button>
+      <button class="filter-tab" data-filter="hormones">Hormones</button>
+      <button class="filter-tab" data-filter="longevity">Longevity</button>
+    </div>
+
+    <div id="treatment-list" class="reveal">
+      <!-- Consult -->
+      <a href="https://precisiontelemed.com/start-general-consultation-program/" target="_blank" rel="noopener" class="treatment-row" data-cat="consult">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.89L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">Meet With a Provider First</div>
+          <div class="tr-desc">Zoom consultation to go over any questions before choosing a program.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">$50.00 Zoom Consult</span>
+          <div class="tr-arrow">
+            <svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Semaglutide -->
+      <a href="https://precisiontelemed.com/compounded-semaglutide/" target="_blank" rel="noopener" class="treatment-row" data-cat="glp1">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 8v8M8 12h8"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">Compounded Semaglutide</div>
+          <div class="tr-desc">GLP-1 weight loss therapy with physician guidance.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">From $149 / month</span>
+          <div class="tr-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+        </div>
+      </a>
+
+      <!-- Tirzepatide -->
+      <a href="https://precisiontelemed.com/compounded-tirzepatide/" target="_blank" rel="noopener" class="treatment-row" data-cat="glp1">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">Compounded Tirzepatide <span class="tr-badge">Most Popular</span></div>
+          <div class="tr-desc">Next-gen dual GLP-1/GIP for accelerated results.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">From $199 / month</span>
+          <div class="tr-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+        </div>
+      </a>
+
+      <!-- TRT -->
+      <a href="https://precisiontelemed.com/testosterone/" target="_blank" rel="noopener" class="treatment-row" data-cat="hormones">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">Testosterone (TRT)</div>
+          <div class="tr-desc">Optimize energy, strength, and hormone balance.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">Only $199 / month</span>
+          <div class="tr-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+        </div>
+      </a>
+
+      <!-- Sermorelin -->
+      <a href="https://precisiontelemed.com/sermorelin/" target="_blank" rel="noopener" class="treatment-row" data-cat="hormones">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/><path d="M19 3v4M21 5h-4"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">Sermorelin Peptide <span class="tr-badge">Most Popular</span></div>
+          <div class="tr-desc">Growth hormone support for recovery and vitality.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">Only $199 / month</span>
+          <div class="tr-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+        </div>
+      </a>
+
+      <!-- NAD+ -->
+      <a href="https://precisiontelemed.com/nad/" target="_blank" rel="noopener" class="treatment-row" data-cat="longevity">
+        <div class="tr-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+        </div>
+        <div class="tr-body">
+          <div class="tr-title">NAD+</div>
+          <div class="tr-desc">Cellular energy and longevity-focused therapy.</div>
+        </div>
+        <div class="tr-right">
+          <span class="tr-price">$139.99 first month, then $149.99/mo</span>
+          <div class="tr-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg></div>
+        </div>
+      </a>
+
+
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  3. AS SEEN IN
+═══════════════════════════════════════════════════════════════ -->
+<div id="as-seen-in">
+  <div class="marquee-track">
+    <!-- items × 2 for seamless loop -->
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>RATED 4.7 ON TRUSTPILOT</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>NO HIDDEN FEES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>BOARD CERTIFIED PHYSICIANS</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094M8.5 2h7"/></svg>FDA REGISTERED FACILITIES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8zM1 18h18"/><circle cx="5" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg>SHIPS IN 3-5 BUSINESS DAYS</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>MONTH-TO-MONTH, NO SUBSCRIPTION</span>
+    <!-- duplicate -->
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>RATED 4.7 ON TRUSTPILOT</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>NO HIDDEN FEES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>BOARD CERTIFIED PHYSICIANS</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094M8.5 2h7"/></svg>FDA REGISTERED FACILITIES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v4h-7V8zM1 18h18"/><circle cx="5" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></svg>SHIPS IN 3-5 BUSINESS DAYS</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>MONTH-TO-MONTH, NO SUBSCRIPTION</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+  4. PROVIDERS SECTION
+═══════════════════════════════════════════════════════════════ -->
+<section id="providers" class="section-sm">
+  <div class="container-sm">
+    <div class="reveal">
+      <span class="tag">Medical Team</span>
+      <h2 class="h2" style="margin-top:8px;">Meet Our Board-Certified Providers</h2>
+      <p class="lead" style="margin-top:8px; max-width:520px;">These aren't just names on a screen — they're the experts ensuring your care is precise, safe, and personal.</p>
+    </div>
+
+    <div class="provider-carousel-wrap reveal">
+      <button class="carousel-btn prev" aria-label="Previous" onclick="scrollCarousel(-1)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="carousel-btn next" aria-label="Next" onclick="scrollCarousel(1)">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="provider-carousel" id="providerCarousel">
+
+      <!-- 1. Dr. Joseph Palumbo -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/dr-palumbo.jpg?v=4" alt="Dr. Joseph Palumbo, DO" style="object-position: center 15%;" />
+        <div class="provider-info">
+          <div class="provider-name">Dr. Joseph Palumbo, DO</div>
+          <div class="provider-specialty">Medical Director</div>
+          <div class="provider-school">Lake Erie College of Osteopathic Medicine</div>
+          <div class="provider-npi">NPI# 1043478878</div>
+        </div>
+      </div>
+
+      <!-- 2. Dr. Kartik Patel -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/dr-patel.jpg?v=4" alt="Dr. Kartik Patel, MD, MBA" />
+        <div class="provider-info">
+          <div class="provider-name">Dr. Kartik Patel, MD, MBA</div>
+          <div class="provider-specialty">Internal Medicine</div>
+          <div class="provider-school">University of Colorado at Denver</div>
+          <div class="provider-npi">NPI# 1568786465</div>
+        </div>
+      </div>
+
+      <!-- 3. Brittany Umana -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/brittany-umana.jpg?v=4" alt="Brittany Umana, DNP, ARNP, FNP-C" />
+        <div class="provider-info">
+          <div class="provider-name">Brittany Umana, DNP, ARNP, FNP-C</div>
+          <div class="provider-specialty">Family Nurse Practitioner</div>
+          <div class="provider-school">Maryville University (DNP) · Washburn University (BSN)</div>
+          <div class="provider-npi">NPI# 1366175051</div>
+        </div>
+      </div>
+
+      <!-- 4. Dr. Azhar Ahmed -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/dr-ahmed.jpg?v=2" alt="Dr. Azhar Ahmed, MD" />
+        <div class="provider-info">
+          <div class="provider-name">Dr. Azhar Ahmed, MD</div>
+          <div class="provider-specialty">Emergency Medicine</div>
+          <div class="provider-school">University of Kentucky</div>
+          <div class="provider-npi">NPI# 1164958351</div>
+        </div>
+      </div>
+
+      <!-- 5. Brett Whaley -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/brett-whaley.jpg?v=4" alt="Brett Whaley, ACNP-BC" />
+        <div class="provider-info">
+          <div class="provider-name">Brett Whaley, ACNP-BC</div>
+          <div class="provider-specialty">Critical Care</div>
+          <div class="provider-school">Texas Tech University School of Nursing</div>
+          <div class="provider-npi">NPI# 1164797643</div>
+        </div>
+      </div>
+
+      <!-- 6. Michael Gype -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/michael-gype.jpg?v=4" alt="Michael Gype, PA-C" />
+        <div class="provider-info">
+          <div class="provider-name">Michael Gype, PA-C</div>
+          <div class="provider-specialty">General Practice</div>
+          <div class="provider-school">Cleveland State University</div>
+          <div class="provider-npi">NPI# 1952760977</div>
+        </div>
+      </div>
+
+      <!-- 7. Dr. Robert Chandler -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/dr-cattelane.jpg?v=7" alt="Dr. Robert Chandler, DO" />
+        <div class="provider-info">
+          <div class="provider-name">Dr. Robert Chandler, DO</div>
+          <div class="provider-specialty">Emergency Medicine</div>
+          <div class="provider-school">Lake Erie College of Osteopathic Medicine</div>
+          <div class="provider-npi">NPI# 1922244664</div>
+        </div>
+      </div>
+
+      <!-- 8. Angela Kifer-Thomas -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/angela-kifer-thomas.jpg?v=2" alt="Angela Kifer-Thomas, APRN, ACNPC-AG" />
+        <div class="provider-info">
+          <div class="provider-name">Angela Kifer-Thomas, APRN, ACNPC-AG</div>
+          <div class="provider-specialty">Acute Care</div>
+          <div class="provider-school">University of Texas Medical Branch at Galveston</div>
+          <div class="provider-npi">NPI# 1578278487</div>
+        </div>
+      </div>
+
+      <!-- 9. Samuel Palmer -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/samuel-palmer.jpg?v=4" alt="Samuel Palmer, APRN" />
+        <div class="provider-info">
+          <div class="provider-name">Samuel Palmer, APRN</div>
+          <div class="provider-specialty">Adult and Geriatric Care</div>
+          <div class="provider-school">Vanderbilt University</div>
+          <div class="provider-npi">NPI# 1689014862</div>
+        </div>
+      </div>
+
+      <!-- 10. Dr. Gidon Akler -->
+      <div class="provider-card">
+        <img class="provider-photo" src="images/dr-akler.jpg?v=3" alt="Dr. Gidon Akler, MD" />
+        <div class="provider-info">
+          <div class="provider-name">Dr. Gidon Akler, MD</div>
+          <div class="provider-specialty">Emergency Medicine</div>
+          <div class="provider-school">Tel Aviv University Medical School · Mount Sinai Hospital NY (Residency)</div>
+          <div class="provider-npi">NPI# 1770978181</div>
+        </div>
+      </div>
+
+      <!-- 11. Angel L. Colón-Molero -->
+      <div class="provider-card">
+        <img class="provider-photo"
+          src="images/angel-colon-molero.jpg?v=2" alt="Angel L. Colón-Molero, MD, MBA, MPH" />
+        <div class="provider-info">
+          <div class="provider-name">Angel L. Colón-Molero, MD, MBA, MPH</div>
+          <div class="provider-specialty">Internal Medicine</div>
+          <div class="provider-school">Veterans Health Administration · Ponce School of Medicine</div>
+          <div class="provider-npi">NPI# 1063415727</div>
+        </div>
+      </div>
+
+      </div><!-- /.provider-carousel -->
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div><!-- /.provider-carousel-wrap -->
+
+    <!-- Pharmacy Partners -->
+    <div class="reveal" style="margin-top:32px;">
+      <span class="tag">Dispensing Partners</span>
+      <h2 class="h2" style="margin-top:8px;">Our Pharmacy Network</h2>
+      <p class="lead" style="margin-top:8px; max-width:560px;">All medications dispensed by FDA-registered, state-board licensed compounding pharmacies with the highest quality standards.</p>
+    </div>
+
+    <div class="pharmacy-grid reveal">
+      <div class="card pharmacy-row">
+        <div class="pharmacy-icon">◆</div>
+        <div><div class="pharmacy-name">Vios Pharmacy</div><div class="pharmacy-desc">503A state-board licensed compounding pharmacy with rigorous quality and safety standards.</div></div>
+      </div>
+      <div class="card pharmacy-row">
+        <div class="pharmacy-icon">◆</div>
+        <div><div class="pharmacy-name">Greenwich Pharmacy TX</div><div class="pharmacy-desc">503A state-board licensed compounding pharmacy specializing in precision-compounded medications.</div></div>
+      </div>
+      <div class="card pharmacy-row">
+        <div class="pharmacy-icon">◆</div>
+        <div><div class="pharmacy-name">Perfect Rx</div><div class="pharmacy-desc">503A patient-specific compounding pharmacy with full Certificate of Analysis on every order.</div></div>
+      </div>
+      <div class="card pharmacy-row">
+        <div class="pharmacy-icon">◆</div>
+        <div><div class="pharmacy-name">Pro Rx</div><div class="pharmacy-desc">Specialized 503B compounding pharmacy delivering potency-verified medications nationwide.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  5. UGC / SUCCESS STORIES
+═══════════════════════════════════════════════════════════════ -->
+<section id="ugc" class="section-sm">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:20px;">
+      <span class="tag">Community</span>
+      <h2 class="h2" style="margin-top:8px;">Real People, Real Results</h2>
+      <p class="lead" style="margin-top:8px; max-width:440px; margin-left:auto; margin-right:auto;">
+        Join thousands sharing their journey. Tag us <strong style="color:var(--sage)">@precisiontelemed</strong> to be featured.
+      </p>
+    </div>
+    <div class="ugc-grid reveal">
+      <div class="ugc-item">
+        <img src="images/ugc-1-unboxing.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@jessica_m</div><div class="ugc-text">Down 28 lbs in 3 months with semaglutide 🙌 Feeling like myself again!</div></div>
+      </div>
+      <div class="ugc-item">
+        <img src="images/ugc-2-day5-update.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@sarahfit_journey</div><div class="ugc-text">Down 3 dress sizes and finally have my energy back. This program changed everything 💪</div></div>
+      </div>
+      <div class="ugc-item">
+        <img src="images/ugc-3-nad-clarity.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@healthywithalex</div><div class="ugc-text">Meal prepping is so much easier when you have a real nutrition plan. Love this program!</div></div>
+      </div>
+      <div class="ugc-item">
+        <img src="images/ugc-4-massive-difference.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@runnermike_</div><div class="ugc-text">Running my first 10k next weekend. Sermorelin recovery has been a game changer 🏃</div></div>
+      </div>
+      <div class="ugc-item">
+        <img src="images/ugc-5-reviews.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@yoga_sarah</div><div class="ugc-text">NAD+ therapy + yoga = the ultimate longevity combo. Feeling 10 years younger ✨</div></div>
+      </div>
+      <div class="ugc-item">
+        <img src="images/ugc-6-day1.jpg?v=2" alt="Success story" loading="lazy"/>
+        <div class="ugc-overlay"></div>
+        <div class="ugc-caption"><div class="ugc-handle">@danielj_results</div><div class="ugc-text">Started tirzepatide 8 weeks ago. The scale doesn't lie — best decision I've made.</div></div>
+      </div>
+    </div>
+    <div class="reveal" style="text-align:center; margin-top:20px;">
+      <a href="https://www.instagram.com/precisiontelemed" target="_blank" rel="noopener" style="color:var(--sage); font-size:.88rem; font-weight:600;">
+        Follow us on Instagram →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  6. COACH CHRIS
+═══════════════════════════════════════════════════════════════ -->
+<section id="coach" class="section-sm">
+  <div class="container-sm">
+
+    <!-- heading -->
+    <div class="reveal" style="text-align:center; margin-bottom:32px;">
+      <h2 class="h2">More Than<br>Medication</h2>
+      <p class="lead" style="margin-top:12px; max-width:520px; margin-left:auto; margin-right:auto;">
+        Our holistic approach includes a free customized workout tailored to your goals — because true wellness goes beyond a prescription.
+      </p>
+      <div style="margin-top:18px;">
+        <span class="pill-badge">🎁 Free with Every Program</span>
+      </div>
+      <h3 class="h3" style="margin-top:24px; font-size:1.15rem;">Receive Your Program After Checkout</h3>
+    </div>
+
+    <!-- workout cards -->
+    <div class="workout-grid reveal">
+
+      <!-- full-width card -->
+      <div class="workout-card-full">
+        <div class="workout-icon">
+          <!-- dumbbell -->
+          <svg viewBox="0 0 24 24"><path d="M6.5 6.5h11M6.5 17.5h11M3 9.5h2v5H3zM19 9.5h2v5h-2zM6.5 4h1v16h-1zM16.5 4h1v16h-1z"/></svg>
+        </div>
+        <div>
+          <div class="workout-title">Weight Loss &amp; Strength Training</div>
+          <div class="workout-desc">Full gym equipment · Burn fat &amp; build muscle simultaneously</div>
+        </div>
+      </div>
+
+      <!-- two half-width cards -->
+      <div class="workout-card-row">
+
+        <div class="workout-card-half">
+          <div class="workout-icon">
+            <!-- home -->
+            <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+          </div>
+          <div>
+            <div class="workout-title">Home Workout</div>
+            <div class="workout-desc">Cardio + no equipment</div>
+          </div>
+        </div>
+
+        <div class="workout-card-half">
+          <div class="workout-icon">
+            <!-- walking person / mobility -->
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="1.5"/><path d="M9 8.5l-2 4.5h4l1 5.5M12 8.5l2 2.5-2 1.5M15 13l2 5"/></svg>
+          </div>
+          <div>
+            <div class="workout-title">Functional Mobility Training</div>
+            <div class="workout-desc">Mobility &amp; stability · Corrective Exercises &amp; fixing imbalances</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /workout-grid -->
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  7. BENEFITS
+═══════════════════════════════════════════════════════════════ -->
+<section id="benefits" class="section-sm">
+  <div class="container-sm">
+    <div class="reveal">
+      <span class="tag">Our Promise</span>
+      <h2 class="h2" style="margin-top:8px;">Healthcare You Can Trust</h2>
+      <p class="lead" style="margin-top:8px;">Doctor-Written Prescriptions. Backed by Science. Powered by Precision.</p>
+    </div>
+
+    <div class="benefits-list reveal">
+      <div class="card benefit-row">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">Board-Certified Physicians</div>
+          <div class="benefit-desc">Every consultation is conducted by a licensed, board-certified physician, nurse practitioner, or physician assistant — never an AI.</div>
+        </div>
+      </div>
+      <div class="card benefit-row">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094M8.5 2h7"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">FDA-Registered Pharmacies</div>
+          <div class="benefit-desc">All medications are compounded in state-board licensed, FDA-registered facilities with rigorous quality standards.</div>
+        </div>
+      </div>
+      <div class="card benefit-row">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">Flexible Payment Options</div>
+          <div class="benefit-desc">Choose autopay for seamless monthly refills, or skip it — the choice is yours. No annual contracts or hidden fees.</div>
+        </div>
+      </div>
+      <div class="card benefit-row">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">HIPAA-Compliant Privacy</div>
+          <div class="benefit-desc">Your health data is fully encrypted and protected. We never sell your information to third parties.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<div id="cta-banner">
+  <div class="container-sm" style="text-align:center;">
+    <div class="reveal">
+      <span class="tag">Ready to Begin?</span>
+      <h2 class="h2" style="margin-top:10px;">Your best health starts today</h2>
+      <p class="lead" style="margin-top:10px; max-width:440px; margin-left:auto; margin-right:auto;">Join thousands of patients getting real results with personalized telemedicine care.</p>
+      <a href="https://precisiontelemed.com/get-started/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:24px; padding:14px 32px; font-size:1rem;">
+        Get Started — It's Easy
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+  8. HOW IT WORKS
+═══════════════════════════════════════════════════════════════ -->
+<section id="how" class="section-sm">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:32px;">
+      <span class="tag">The Process</span>
+      <h2 class="h2" style="margin-top:8px;">Healthcare Made Simple</h2>
+      <p class="lead" style="margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto;">From your first visit to medication at your door — entirely online, entirely yours.</p>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step-item">
+        <div class="step-circle"><span class="step-num">01</span></div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></svg>
+        </div>
+        <div class="step-title">Complete Intake</div>
+        <div class="step-desc">Answer a short health questionnaire from your phone or computer in minutes.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle"><span class="step-num">02</span></div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.89L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+        </div>
+        <div class="step-title">Meet Your Doctor</div>
+        <div class="step-desc">A board-certified provider reviews your profile via Zoom consultation and creates a personalized plan.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle"><span class="step-num">03</span></div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094M8.5 2h7"/></svg>
+        </div>
+        <div class="step-title">Prescription Sent</div>
+        <div class="step-desc">Your prescription is fulfilled at an FDA-registered compounding pharmacy.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle"><span class="step-num">04</span></div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 12H2l3-3m0 0 3 3M5 9v12M19 12h3l-3-3m0 0-3 3m3-3V21"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M7 6h10l1 6H6L7 6z"/></svg>
+        </div>
+        <div class="step-title">Delivered to You</div>
+        <div class="step-desc">Medication ships discreetly to your door in 3–5 business days, with ongoing provider check-ins.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  9. STATS BANNER
+═══════════════════════════════════════════════════════════════ -->
+<section id="stats">
+  <div class="container-sm reveal">
+    <span class="tag">Why We're Different</span>
+    <h2 class="h2">Precision medicine, not one-size-fits-all</h2>
+    <p class="lead">Every patient is unique. Our physicians tailor every protocol to your biology, goals, and lifestyle.</p>
+    <div class="stats-grid">
+      <div><div class="stat-val">98%</div><div class="stat-label">Patient satisfaction rate</div></div>
+      <div><div class="stat-val">50</div><div class="stat-label">States served nationwide</div></div>
+      <div><div class="stat-val">3–5</div><div class="stat-label">Business days to ship</div></div>
+      <div><div class="stat-val">100%</div><div class="stat-label">Board-certified physicians</div></div>
+    </div>
+    <div class="stats-footer"><a href="https://www.trustpilot.com/review/precisiontelemed.com" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;"><strong>4.7 / 5 "Excellent"</strong> on Trustpilot ↗</a></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  10. TESTIMONIALS
+═══════════════════════════════════════════════════════════════ -->
+<section id="testimonials" class="section-sm">
+  <div class="container-sm">
+    <div class="reveal" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:24px;">
+      <div>
+        <div class="tp-badge">
+          <span class="tp-label">Trustpilot</span>
+          <div class="tp-stars">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <span class="tp-score">4.7</span>
+          <span style="font-size:.82rem; color:var(--fg-muted)">out of 5</span>
+        </div>
+      </div>
+      <a href="https://www.trustpilot.com/review/precisiontelemed.com" target="_blank" rel="noopener" class="tp-link">Read all reviews →</a>
+    </div>
+
+    <div class="reveal" style="margin-bottom:20px;">
+      <span class="tag">Verified Patient Reviews</span>
+      <h2 class="h2" style="margin-top:8px;">Real Results, Real People</h2>
+    </div>
+
+    <div class="reviews-grid reveal">
+      <div class="card review-card">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Really easy application process. Didn't have to pay for months in advance. Medication shipped quickly and was always cold."</p>
+        <div class="review-author">
+          <div class="review-avatar">VA</div>
+          <div><div class="review-name">Vanessa A.</div><div class="review-program">Semaglutide</div></div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Former athlete — low energy, slow recovery. The testosterone program changed everything. Night and day difference in focus, mood, and energy."</p>
+        <div class="review-author">
+          <div class="review-avatar">MM</div>
+          <div><div class="review-name">Marcus M.</div><div class="review-program">Testosterone</div></div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Outstanding customer service. Prescriptions on time and well packaged. Family-owned, fair pricing — genuinely refreshing."</p>
+        <div class="review-author">
+          <div class="review-avatar">MP</div>
+          <div><div class="review-name">Melissa P.</div><div class="review-program">Semaglutide</div></div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Their Sermorelin program helped me overcome my plateau. My hair grows faster and thicker and I sleep much better!"</p>
+        <div class="review-author">
+          <div class="review-avatar">IC</div>
+          <div><div class="review-name">Irina C.</div><div class="review-program">Sermorelin</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+  JS: filter tabs + scroll reveal
+═══════════════════════════════════════════════════════════════ -->
+<script>
+  // ── Treatment filter ──────────────────────────────────────────
+  const tabs = document.querySelectorAll('.filter-tab');
+  const rows = document.querySelectorAll('#treatment-list .treatment-row');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      rows.forEach(row => {
+        const cat = row.dataset.cat;
+        if (filter === 'all' || cat === filter || cat === 'consult') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // ── Scroll reveal ─────────────────────────────────────────────
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Doctor carousel ───────────────────────────────────────────
+  const carousel   = document.getElementById('providerCarousel');
+  const dotsWrap   = document.getElementById('carouselDots');
+  const CARD_W     = () => carousel.querySelector('.provider-card')?.offsetWidth + 18 || 238;
+  const VISIBLE    = () => Math.round(carousel.offsetWidth / CARD_W());
+  const TOTAL      = () => carousel.querySelectorAll('.provider-card').length;
+
+  // Build dots
+  function buildDots() {
+    dotsWrap.innerHTML = '';
+    const pages = Math.ceil(TOTAL() / VISIBLE());
+    for (let i = 0; i < pages; i++) {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => goToPage(i));
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const page = Math.round(carousel.scrollLeft / (CARD_W() * VISIBLE()));
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === page);
+    });
+  }
+
+  function goToPage(page) {
+    carousel.scrollTo({ left: page * CARD_W() * VISIBLE(), behavior: 'smooth' });
+  }
+
+  function scrollCarousel(dir) {
+    carousel.scrollBy({ left: dir * CARD_W() * Math.max(1, VISIBLE() - 1), behavior: 'smooth' });
+  }
+
+  carousel.addEventListener('scroll', updateDots, { passive: true });
+  window.addEventListener('resize', buildDots);
+
+  // Drag-to-scroll
+  let isDragging = false, startX = 0, scrollStart = 0;
+  carousel.addEventListener('mousedown', e => {
+    isDragging = true; startX = e.pageX; scrollStart = carousel.scrollLeft;
+    carousel.style.userSelect = 'none';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    carousel.scrollLeft = scrollStart - (e.pageX - startX);
+  });
+  window.addEventListener('mouseup', () => { isDragging = false; carousel.style.userSelect = ''; });
+
+  // Init dots after photos may have loaded
+  setTimeout(buildDots, 200);
+
+  // Rebuild dots after doctor photos load from API
+  const _origLoad = window.__cropLoaderDone;
+  const dotRebuildObserver = new MutationObserver(() => buildDots());
+  dotRebuildObserver.observe(carousel, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+  setTimeout(() => { buildDots(); dotRebuildObserver.disconnect(); }, 3000);
+  (async () => {
+    try {
+      const resp = await fetch('tables/doctor_crops?limit=20');
+      const data = await resp.json();
+      if (!data.data || !data.data.length) return;
+
+      // Build lookup: name → base64
+      const lookup = {};
+      for (const row of data.data) {
+        if (row.name && row.image_data) lookup[row.name] = row.image_data;
+      }
+
+      // Swap each provider-photo src
+      document.querySelectorAll('img[data-doctor]').forEach(img => {
+        const key = img.dataset.doctor;
+        if (lookup[key]) {
+          img.src = 'data:image/jpeg;base64,' + lookup[key];
+          img.style.objectPosition = 'center top';
+        }
+      });
+    } catch(e) {
+      console.warn('Doctor photo loader failed:', e);
+    }
+  })();
+</script>
+</body>
+</html>
